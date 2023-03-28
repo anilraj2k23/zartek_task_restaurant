@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "889816245957",
+    "project_id": "restaurant-app-zartek",
+    "storage_bucket": "restaurant-app-zartek.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:889816245957:android:3e4d762cbbcca2455eb2ac",
+        "android_client_info": {
+          "package_name": "com.example.zartek_task_restaurant"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "889816245957-5e53nr7bed1p0g8297b0c0tl4rp237gb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.zartek_task_restaurant",
+            "certificate_hash": "262826506f2e1511ddf70fbf15e3deb68930f480"
+          }
+        },
+        {
+          "client_id": "889816245957-p2dvjl3m14jp0gjgkouv09t2jtj87i66.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCSF-_sesVLXptE38m9QyjCf2v7m-V_m_Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "889816245957-p2dvjl3m14jp0gjgkouv09t2jtj87i66.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
