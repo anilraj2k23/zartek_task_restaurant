@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:zartek_task_restaurant/providers/cart_provider.dart';
+import 'package:zartek_task_restaurant/providers/dishes_provider.dart';
 import 'package:zartek_task_restaurant/view/authentication_screen.dart';
 import 'package:zartek_task_restaurant/view/checkout_screen.dart';
 import 'package:zartek_task_restaurant/view/user_home_screen.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 void main() {
   runApp(const MyApp());
@@ -17,7 +19,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [
+      providers: [ChangeNotifierProvider<DishesProvider>(
+          create: (context) => DishesProvider()),
         ChangeNotifierProvider<CartProvider>(
             create: (context) => CartProvider())
       ],
@@ -27,9 +30,9 @@ class MyApp extends StatelessWidget {
           builder: (BuildContext context, Widget? child) {
             return MaterialApp(debugShowCheckedModeBanner: false,
               title: 'Restaurant App',
-              theme: ThemeData(
-                useMaterial3: true,
-                primarySwatch: Colors.green,
+              theme: ThemeData(colorSchemeSeed:Color(0xFF4CAC52) ,
+                 useMaterial3: true,
+
               ),
               routes: {
                 '/': (BuildContext ctx) =>

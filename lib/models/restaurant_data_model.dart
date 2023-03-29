@@ -96,7 +96,7 @@ class CategoryDish {
     dishName: json["dish_name"],
     dishPrice: json["dish_price"]?.toDouble(),
     dishImage: json["dish_image"],
-    dishCurrency:  json["dish_currency"],
+    dishCurrency:   'INR',
     dishCalories: json["dish_calories"],
     dishDescription: json["dish_description"],
     dishAvailability: json["dish_Availability"],
