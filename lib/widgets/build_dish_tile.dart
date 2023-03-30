@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 import 'package:zartek_task_restaurant/models/restaurant_data_model.dart';
 import 'package:zartek_task_restaurant/providers/cart_provider.dart';
-class BuildDishTiles extends StatelessWidget {
-  const BuildDishTiles({super.key, required this.salad, required this.cart});
 
-  final List<TableMenuList> salad;
-  final CartProvider cart;
+class BuildDishTiles extends StatelessWidget {
+  const BuildDishTiles({super.key, required this.menuCategory});
+
+  final List<TableMenuList> menuCategory;
+
 
   @override
   Widget build(BuildContext context) {
+    final cartProvider=Provider.of<CartProvider>(context,listen: false);
     return ListView.separated(
       itemBuilder: (context, index) {
-        return Container(
+        return SizedBox(
           width: double.infinity,
           height: 255.h,
           child: Padding(
@@ -20,7 +23,7 @@ class BuildDishTiles extends StatelessWidget {
               child: Stack(
                 children: [
                   Positioned(
-                    top: 5.h,
+                    top: 2.h,
                     child: Image.network(
                       'https://cdn-icons-png.flaticon.com/512/1971/1971034.png',
                       width: 20.h,
@@ -30,18 +33,18 @@ class BuildDishTiles extends StatelessWidget {
                   Positioned(
                     left: 30.w,
                     child: Text(
-                      salad[0].categoryDishes[index].dishName,
+                      menuCategory[0].categoryDishes[index].dishName,
                       maxLines: 3,
                       style:
-                      TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+                          const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
                     ),
                   ),
                   Positioned(
                     left: 30.w,
                     top: 35.h,
                     child: Text(
-                      '${salad[0].categoryDishes[index].dishCurrency} '
-                          '${salad[0].categoryDishes[index].dishPrice}',
+                      '${menuCategory[0].categoryDishes[index].dishCurrency} '
+                      '${menuCategory[0].categoryDishes[index].dishPrice}',
                       style: TextStyle(fontSize: 17.sp),
                     ),
                   ),
@@ -49,9 +52,9 @@ class BuildDishTiles extends StatelessWidget {
                     padding: EdgeInsets.only(left: 30.w, top: 80.h),
                     child: Row(children: [
                       Flexible(
-                        child: Text(
-                            salad[0].categoryDishes[index].dishDescription),
                         fit: FlexFit.tight,
+                        child: Text(
+                            menuCategory[0].categoryDishes[index].dishDescription),
                       )
                     ]),
                   ),
@@ -59,10 +62,20 @@ class BuildDishTiles extends StatelessWidget {
                       top: 35.h,
                       left: 0.5.sw,
                       child: Text(
-                        '${salad[0].categoryDishes[index].dishCalories} calories',
-                        style: TextStyle(
+                        '${menuCategory[0].categoryDishes[index].dishCalories} calories',
+                        style: const TextStyle(
                             fontSize: 15, fontWeight: FontWeight.w500),
                       )),
+                  Visibility(
+                      visible:
+                          menuCategory[0].categoryDishes[index].addonCat!.isNotEmpty,
+                      child: Positioned(
+                          right: 10.w,
+                          top: 0.21.sh,
+                          child: const Text(textAlign: TextAlign.center,
+                            'Customisation\n Available',
+                            style: TextStyle(color: Colors.pink, fontSize: 17,),
+                          ))),
                   Positioned(
                       left: 30.w,
                       top: 180.h,
@@ -77,22 +90,22 @@ class BuildDishTiles extends StatelessWidget {
                           children: [
                             InkWell(
                                 onTap: () {
-                                  cart.decrementOrder();
+                               cartProvider.removeItem( menuCategory[0].categoryDishes[index]);
                                 },
-                                child: Icon(
+                                child: const Icon(
                                   Icons.remove,
                                   color: Colors.white,
                                 )),
                             Text(
-                              cart.orderCount.toString(),
+                              '${cartProvider.itemCount(menuCategory[0].categoryDishes[index])}',
                               style: TextStyle(
                                   color: Colors.white, fontSize: 17.sp),
                             ),
                             InkWell(
                                 onTap: () {
-                                  cart.incrementOrder();
+                                  cartProvider.addItem(menuCategory[0].categoryDishes[index]);
                                 },
-                                child: Icon(
+                                child: const Icon(
                                   Icons.add,
                                   color: Colors.white,
                                 )),
@@ -112,9 +125,9 @@ class BuildDishTiles extends StatelessWidget {
         );
       },
       separatorBuilder: (context, index) {
-        return Divider();
+        return const Divider();
       },
-      itemCount: salad[0].categoryDishes.length,
+      itemCount: menuCategory[0].categoryDishes.length,
     );
   }
 }

@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:provider/provider.dart';
 import 'package:zartek_task_restaurant/models/restaurant_data_model.dart';
 import 'package:zartek_task_restaurant/providers/cart_provider.dart';
@@ -15,11 +17,18 @@ class ScreenUserHome extends StatefulWidget {
 
 class _ScreenUserHomeState extends State<ScreenUserHome>
     with SingleTickerProviderStateMixin {
+  late User _user;
+
+  @override
+  void initState() {
+    super.initState();
+    _user = FirebaseAuth.instance.currentUser!;
+  }
+
   @override
   Widget build(BuildContext context) {
-    var restaurantData =
-        Provider.of<DishesProvider>(context, listen: false).dishes;
-
+    final cartProvider = Provider.of<CartProvider>(context, listen: false);
+    var restaurantData = Provider.of<DishesProvider>(context).dishes;
 
     List<TableMenuList> filtermenu({required String menuId}) {
       List<TableMenuList> filteredMenu = restaurantData![0]
@@ -41,7 +50,7 @@ class _ScreenUserHomeState extends State<ScreenUserHome>
                     Padding(
                         padding: EdgeInsets.only(right: 3.w),
                         child: Badge(
-                          label: Text(cart.orderCount.toString()),
+                          label: Text(cart.cartDishes.length.toString()),
                           child: IconButton(
                               icon: Icon(
                                 Icons.shopping_cart,
@@ -65,14 +74,22 @@ class _ScreenUserHomeState extends State<ScreenUserHome>
                 drawer: Drawer(
                   child: ListView(
                     children: [
-                      const UserAccountsDrawerHeader(
+                      UserAccountsDrawerHeader(
+                          decoration: BoxDecoration(
+                              gradient: LinearGradient(colors: [
+                            Theme.of(context).primaryColor,
+                            Theme.of(context).primaryColor,
+                            Colors.green
+                          ])),
                           currentAccountPicture: CircleAvatar(
-                              foregroundImage:
-                                  AssetImage('assets/profile_vector.jpg')),
-                          accountName: Text('Muhammed Naseem'),
-                          accountEmail: Text(
-                            'ID : 410',
-                          )),
+                              foregroundImage: NetworkImage(_user.photoURL ??
+                                  'https://cdn.pixabay.com/photo/2019/08/11/18/59/icon-4399701_640.png')
+                              // AssetImage('assets/profile_vector.jpg')
+                              ),
+                          accountName: Text(
+                              _user.phoneNumber ?? _user.displayName ?? ''),
+                          accountEmail:
+                              Text('ID: ${_user.uid.substring(0, 3)}')),
                       Padding(
                           padding: EdgeInsets.symmetric(
                               vertical: 10.h, horizontal: 10.w),
@@ -85,11 +102,25 @@ class _ScreenUserHomeState extends State<ScreenUserHome>
                               'Log Out',
                               style: TextStyle(fontSize: 18.sp),
                             ),
-                            onTap: () {
-                              Navigator.popUntil(
-                                  context, ModalRoute.withName('/'));
-
-                              // Add drawer item 1 logic here
+                            onTap: () async {
+                              try {
+                                final currentUser =
+                                    FirebaseAuth.instance.currentUser;
+                                if (currentUser != null) {
+                                  if (currentUser.providerData.any((element) =>
+                                      element.providerId == 'google.com')) {
+                                    await GoogleSignIn().signOut();
+                                  } else if (currentUser.providerData.any(
+                                      (element) =>
+                                          element.providerId == 'phone')) {
+                                    await FirebaseAuth.instance.signOut();
+                                  }
+                                }
+                                Navigator.popUntil(
+                                    context, ModalRoute.withName('/'));
+                              } catch (e) {
+                                print(e.toString());
+                              }
                             },
                           )),
                     ],
@@ -98,28 +129,22 @@ class _ScreenUserHomeState extends State<ScreenUserHome>
                 body: TabBarView(
                   children: [
                     BuildDishTiles(
-                      salad: filtermenu(menuId: '11'),
-                      cart: cart,
+                      menuCategory: filtermenu(menuId: '11'),
                     ),
                     BuildDishTiles(
-                      salad: filtermenu(menuId: '12'),
-                      cart: cart,
+                      menuCategory: filtermenu(menuId: '12'),
                     ),
                     BuildDishTiles(
-                      salad: filtermenu(menuId: '13'),
-                      cart: cart,
+                      menuCategory: filtermenu(menuId: '13'),
                     ),
                     BuildDishTiles(
-                      salad: filtermenu(menuId: '14'),
-                      cart: cart,
+                      menuCategory: filtermenu(menuId: '14'),
                     ),
                     BuildDishTiles(
-                      salad: filtermenu(menuId: '15'),
-                      cart: cart,
+                      menuCategory: filtermenu(menuId: '15'),
                     ),
                     BuildDishTiles(
-                      salad: filtermenu(menuId: '17'),
-                      cart: cart,
+                      menuCategory: filtermenu(menuId: '17'),
                     )
                   ],
                 ),
@@ -131,4 +156,3 @@ class _ScreenUserHomeState extends State<ScreenUserHome>
     );
   }
 }
-

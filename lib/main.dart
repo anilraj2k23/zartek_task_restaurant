@@ -3,12 +3,19 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:zartek_task_restaurant/providers/cart_provider.dart';
 import 'package:zartek_task_restaurant/providers/dishes_provider.dart';
-import 'package:zartek_task_restaurant/view/authentication_screen.dart';
+import 'package:zartek_task_restaurant/view/authentication_methods.dart';
 import 'package:zartek_task_restaurant/view/checkout_screen.dart';
-import 'package:zartek_task_restaurant/view/user_home_screen.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:zartek_task_restaurant/view/phone_auth.dart';
+ import 'package:zartek_task_restaurant/view/user_home_screen.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-void main() {
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  FirebaseFirestore.instance.settings = const Settings(
+    persistenceEnabled: true,
+  );
   runApp(const MyApp());
 }
 
@@ -37,6 +44,7 @@ class MyApp extends StatelessWidget {
               routes: {
                 '/': (BuildContext ctx) =>
                     const ScreenAuthentication(),
+                '/phoneAuth': (BuildContext ctx) => const PhoneAuthentication(),
                 '/homeScreen': (BuildContext ctx) => const ScreenUserHome(),
                 '/checkoutScreen': (BuildContext ctx) => const ScreenCheckout(),
               },initialRoute: '/',

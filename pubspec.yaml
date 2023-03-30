@@ -37,6 +37,10 @@ dependencies:
   http: ^0.13.5
   mockito: ^5.4.0
   google_fonts: ^4.0.3
+  cloud_firestore: ^4.4.5
+  google_sign_in: ^6.0.2
+  lottie: ^2.3.1
+
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -69,6 +73,7 @@ flutter:
   assets:
     - assets/logo/
     - assets/
+    - assets/lotties/
 
 
   # An image asset can refer to one or more resolution-specific "variants", see
