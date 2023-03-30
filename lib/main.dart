@@ -8,14 +8,11 @@ import 'package:zartek_task_restaurant/view/checkout_screen.dart';
 import 'package:zartek_task_restaurant/view/phone_auth.dart';
  import 'package:zartek_task_restaurant/view/user_home_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  FirebaseFirestore.instance.settings = const Settings(
-    persistenceEnabled: true,
-  );
   runApp(const MyApp());
 }
 

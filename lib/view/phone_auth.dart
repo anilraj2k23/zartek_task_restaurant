@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -18,6 +18,7 @@ class PhoneAuthentication extends StatefulWidget {
 
 class _PhoneAuthenticationState extends State<PhoneAuthentication> {
   Timer? _timer;
+  bool _isLoading =false;
   bool _isTimerRunning = false;
   final _formKey = GlobalKey<FormState>();
   RegExp numberRegExp = RegExp(r'^(?:[+][91])?\d{10,12}$');
@@ -32,14 +33,8 @@ class _PhoneAuthenticationState extends State<PhoneAuthentication> {
       phoneNumber: "+91$phoneNumber",
       timeout:  const Duration(seconds: 60),
       verificationCompleted: (PhoneAuthCredential credential) async {
-        // Save phone number to Firestore
-        await FirebaseFirestore.instance
-            .collection('users')
-            .doc(FirebaseAuth.instance.currentUser!.uid)
-            .set({
-          'phoneNumber': phoneNumber,
-        });
-      },
+
+        },
       verificationFailed: (FirebaseAuthException e) {
         if (e.code == 'invalid-phone-number') {
           print('The provided phone number is not valid.');
@@ -56,11 +51,15 @@ class _PhoneAuthenticationState extends State<PhoneAuthentication> {
   }
 
   Future<void> _verifyOTP() async {
+    setState(() {
+      _isLoading =true;
+    });
+
     String smsCode = _smsCodeController.text;
     PhoneAuthCredential credential = PhoneAuthProvider.credential(
         verificationId: _verificationId, smsCode: smsCode);
     await FirebaseAuth.instance.signInWithCredential(credential);
-    setState(() {
+    setState(() {_isLoading=false;
       _isTimerRunning = false;
     });
 
@@ -169,7 +168,7 @@ class _PhoneAuthenticationState extends State<PhoneAuthentication> {
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10.0.r)),
                     minimumSize: Size(357.w, 47.h)),
-                child: loadDishes.isLoading
+                child: _isLoading
                     ? const CircularProgressIndicator(
                         color: Colors.white,
                       )

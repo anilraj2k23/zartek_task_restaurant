@@ -37,7 +37,6 @@ dependencies:
   http: ^0.13.5
   mockito: ^5.4.0
   google_fonts: ^4.0.3
-  cloud_firestore: ^4.4.5
   google_sign_in: ^6.0.2
   lottie: ^2.3.1
 
