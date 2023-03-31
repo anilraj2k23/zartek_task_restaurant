@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -13,6 +14,8 @@ class ScreenAuthentication extends StatefulWidget {
 }
 
 class _ScreenAuthenticationState extends State<ScreenAuthentication> {
+  bool _isLoading = false;
+
   @override
   void initState() {
     super.initState();
@@ -36,45 +39,55 @@ class _ScreenAuthenticationState extends State<ScreenAuthentication> {
               style: FilledButton.styleFrom(
                   minimumSize: Size(0.8.sw, 0.07.sh),
                   backgroundColor: Colors.blueAccent),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  CircleAvatar(
-                    foregroundImage: AssetImage(
-                      'assets/google-logo.png',
+              child: _isLoading
+                  ?   CupertinoActivityIndicator(radius: 15.r,color: Colors.white,)
+                  : Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        const CircleAvatar(
+                          foregroundImage: AssetImage(
+                            'assets/google-logo.png',
+                          ),
+                        ),
+                        SizedBox(width: 10.w),
+                        Text(
+                          'Google',
+                          style: TextStyle(fontSize: 18.sp),
+                        ),
+                      ],
                     ),
-                  ),
-                  SizedBox(width: 10.w),
-                  Text(
-                    'Google',
-                    style: TextStyle(fontSize: 18.sp),
-                  ),
-                ],
-              ),
               onPressed: () async {
+                setState(() {
+                  _isLoading = true;
+                });
+
                 try {
                   final GoogleSignInAccount? googleUser =
                       await GoogleSignIn().signIn();
+                  if (googleUser == null) {
+                    throw Exception('Failed to sign in with Google.');
+                  }
                   final GoogleSignInAuthentication googleAuth =
-                      await googleUser!.authentication;
+                      await googleUser.authentication;
 
-                  // Get the Firebase credential from the Google user
                   final AuthCredential credential =
                       GoogleAuthProvider.credential(
                     accessToken: googleAuth.accessToken,
                     idToken: googleAuth.idToken,
                   );
 
-                  // Sign in to Firebase with the Google user's credential
-                  final UserCredential userCredential = await FirebaseAuth
-                      .instance
-                      .signInWithCredential(credential);
+                  await FirebaseAuth.instance.signInWithCredential(credential);
 
-                  // Navigate to the home page on successful login
                   Navigator.pushNamed(context, '/homeScreen');
                 } catch (e) {
-                  print(e.toString());
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(e.toString())),
+                  );
+                } finally {
+                  setState(() {
+                    _isLoading = false;
+                  });
                 }
               },
             ),
@@ -90,8 +103,9 @@ class _ScreenAuthenticationState extends State<ScreenAuthentication> {
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Image.asset( height: 30.h,width: 30.w
-                    ,
+                  Image.asset(
+                    height: 30.h,
+                    width: 30.w,
                     'assets/phone-logo.png',
                   ),
                   SizedBox(width: 10.w),

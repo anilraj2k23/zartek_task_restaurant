@@ -28,42 +28,64 @@ class _PhoneAuthenticationState extends State<PhoneAuthentication> {
   late String _verificationId;
 
   Future<void> _verifyPhoneNumber() async {
-    String phoneNumber = _phoneNumberController.text;
-    await FirebaseAuth.instance.verifyPhoneNumber(
-      phoneNumber: "+91$phoneNumber",
-      timeout:  const Duration(seconds: 60),
-      verificationCompleted: (PhoneAuthCredential credential) async {
+    final String phoneNumber = _phoneNumberController.text.trim();
+    final String formattedPhoneNumber = "+91$phoneNumber";
+
+    try {
+      await FirebaseAuth.instance.verifyPhoneNumber(
+        phoneNumber: formattedPhoneNumber,
+        timeout: const Duration(seconds: 60),
+        verificationCompleted: (PhoneAuthCredential credential) async {
 
         },
-      verificationFailed: (FirebaseAuthException e) {
-        if (e.code == 'invalid-phone-number') {
-          print('The provided phone number is not valid.');
-        }
-      },
-      codeSent: (String verificationId, int? resendToken) {
-        setState(() {
-          _verificationId = verificationId;
-          _isTimerRunning = true;
-        });
-      },
-      codeAutoRetrievalTimeout: (String verificationId) {},
-    );
+        verificationFailed: (FirebaseAuthException e) {
+          if (e.code == 'invalid-phone-number') {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('The provided phone number is not valid.')),
+            );
+          }
+        },
+        codeSent: (String verificationId, int? resendToken) {
+          setState(() {
+            _verificationId = verificationId;
+            _isTimerRunning = true;
+          });
+        },
+        codeAutoRetrievalTimeout: (String verificationId) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Code retrieval timed out. Please try again.')),
+          );
+        },
+      );
+    } catch (e) {
+      print('Failed to verify phone number: $e');
+    }
   }
 
   Future<void> _verifyOTP() async {
     setState(() {
-      _isLoading =true;
+      _isLoading = true;
     });
 
-    String smsCode = _smsCodeController.text;
-    PhoneAuthCredential credential = PhoneAuthProvider.credential(
-        verificationId: _verificationId, smsCode: smsCode);
-    await FirebaseAuth.instance.signInWithCredential(credential);
-    setState(() {_isLoading=false;
-      _isTimerRunning = false;
-    });
+    final String smsCode = _smsCodeController.text.trim();
+    final PhoneAuthCredential credential = PhoneAuthProvider.credential(
+      verificationId: _verificationId,
+      smsCode: smsCode,
+    );
 
-    Navigator.pushNamed(context, '/homeScreen');
+    try {
+      await FirebaseAuth.instance.signInWithCredential(credential);
+      Navigator.pushNamed(context, '/homeScreen');
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to sign in: $e')),
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+        _isTimerRunning = false;
+      });
+    }
   }
 
   @override
