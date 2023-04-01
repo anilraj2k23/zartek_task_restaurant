@@ -36,7 +36,7 @@ class BuildDishTiles extends StatelessWidget {
                       menuCategory[0].categoryDishes[index].dishName,
                       maxLines: 3,
                       style:
-                          const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+                            TextStyle(fontSize: 17.sp, fontWeight: FontWeight.bold),
                     ),
                   ),
                   Positioned(
@@ -63,8 +63,8 @@ class BuildDishTiles extends StatelessWidget {
                       left: 0.5.sw,
                       child: Text(
                         '${menuCategory[0].categoryDishes[index].dishCalories} calories',
-                        style: const TextStyle(
-                            fontSize: 15, fontWeight: FontWeight.w500),
+                        style:   TextStyle(
+                            fontSize: 15.sp, fontWeight: FontWeight.w500),
                       )),
                   Visibility(
                       visible:
@@ -72,9 +72,9 @@ class BuildDishTiles extends StatelessWidget {
                       child: Positioned(
                           right: 10.w,
                           top: 0.21.sh,
-                          child: const Text(textAlign: TextAlign.center,
+                          child:   Text(textAlign: TextAlign.center,
                             'Customisation\n Available',
-                            style: TextStyle(color: Colors.pink, fontSize: 17,),
+                            style: TextStyle(color: Colors.pink, fontSize: 17.sp,),
                           ))),
                   Positioned(
                       left: 30.w,
