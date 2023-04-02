@@ -79,7 +79,7 @@ class _ScreenAuthenticationState extends State<ScreenAuthentication> {
 
                   await FirebaseAuth.instance.signInWithCredential(credential);
 
-                  Navigator.pushNamed(context, '/homeScreen');
+                  if(context.mounted){Navigator.pushNamedAndRemoveUntil(context, '/homeScreen',(route) =>false );}
                 } catch (e) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text(e.toString())),

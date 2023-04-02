@@ -75,7 +75,8 @@ class _PhoneAuthenticationState extends State<PhoneAuthentication> {
 
     try {
       await FirebaseAuth.instance.signInWithCredential(credential);
-      Navigator.pushNamed(context, '/homeScreen');
+      if(context.mounted){Navigator.pushNamedAndRemoveUntil(context, '/homeScreen',(route) =>false );}
+
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to sign in: $e')),
