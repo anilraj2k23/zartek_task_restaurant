@@ -19,10 +19,10 @@ class _ScreenAuthenticationState extends State<ScreenAuthentication> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      var loadDishes = Provider.of<DishesProvider>(context, listen: false);
-      await loadDishes.getDishes(context);
-    });
+    // WidgetsBinding.instance.addPostFrameCallback((_) async {
+    //   var loadDishes = Provider.of<DishesProvider>(context, listen: false);
+    //   await loadDishes.getDishes(context);
+    // });
   }
 
   @override
@@ -79,7 +79,7 @@ class _ScreenAuthenticationState extends State<ScreenAuthentication> {
 
                   await FirebaseAuth.instance.signInWithCredential(credential);
 
-                  if(context.mounted){Navigator.pushNamedAndRemoveUntil(context, '/homeScreen',(route) =>false );}
+
                 } catch (e) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text(e.toString())),

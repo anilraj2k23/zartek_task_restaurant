@@ -4,10 +4,10 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:provider/provider.dart';
+
 import 'package:zartek_task_restaurant/widgets/otp_counter.dart';
 
-import '../providers/dishes_provider.dart';
+
 
 class PhoneAuthentication extends StatefulWidget {
   const PhoneAuthentication({Key? key}) : super(key: key);
@@ -75,7 +75,8 @@ class _PhoneAuthenticationState extends State<PhoneAuthentication> {
 
     try {
       await FirebaseAuth.instance.signInWithCredential(credential);
-      if(context.mounted){Navigator.pushNamedAndRemoveUntil(context, '/homeScreen',(route) =>false );}
+      Navigator.pushReplacementNamed(context, '/homeScreen');
+
 
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -91,8 +92,6 @@ class _PhoneAuthenticationState extends State<PhoneAuthentication> {
 
   @override
   Widget build(BuildContext context) {
-    var loadDishes = Provider.of<DishesProvider>(context);
-
     return Scaffold(
       body: SafeArea(
           child: SingleChildScrollView(
@@ -139,12 +138,12 @@ class _PhoneAuthenticationState extends State<PhoneAuthentication> {
                                       },
                                     )
                                   : null,
-                              prefixIcon: Icon(
+                              prefixIcon: const Icon(
                                 Icons.phone_android,
                               ),
                               suffix: TextButton(
                                   onPressed: _verifyPhoneNumber,
-                                  child: Text('Send OTP')),
+                                  child: const Text('Send OTP')),
                               hintText: 'Mobile number'),
                           validator: (number) {
                             if (number!.isNotEmpty &&
@@ -158,8 +157,8 @@ class _PhoneAuthenticationState extends State<PhoneAuthentication> {
                         TextFormField(
                           keyboardType: TextInputType.number,
                           controller: _smsCodeController,
-                          decoration: InputDecoration(
-                            prefixIcon: const Icon(
+                          decoration: const InputDecoration(
+                            prefixIcon: Icon(
                               Icons.lock,
                             ),
                             hintText: 'OTP',
@@ -182,9 +181,9 @@ class _PhoneAuthenticationState extends State<PhoneAuthentication> {
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 30.20.w),
               child: FilledButton(
-                onPressed: () async {
+                onPressed: (){
                   if (_formKey.currentState!.validate()) {
-                    _verifyOTP();
+                     _verifyOTP();
                   }
                 },
                 style: FilledButton.styleFrom(

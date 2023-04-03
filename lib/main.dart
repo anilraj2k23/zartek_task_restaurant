@@ -9,6 +9,7 @@ import 'package:zartek_task_restaurant/view/checkout_screen.dart';
 import 'package:zartek_task_restaurant/view/phone_auth.dart';
  import 'package:zartek_task_restaurant/view/user_home_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 
 void main() async{
@@ -18,15 +19,38 @@ void main() async{
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
 
-  // This widget is the root of your application.
+
+class MyApp extends StatefulWidget {
+  const MyApp({Key? key}) : super(key: key);
+
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  User? user;
+
+  @override
+  void initState() {
+    super.initState();
+    checkAuthStatus();
+  }
+
+  void checkAuthStatus() async {
+    FirebaseAuth.instance.authStateChanges().listen((User? currentUser) {
+      setState(() {
+        user = currentUser;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [ChangeNotifierProvider<DishesProvider>(
-          create: (context) => DishesProvider()),
+      providers: [
+        ChangeNotifierProvider<DishesProvider>(
+            create: (context) => DishesProvider()),
         ChangeNotifierProvider<CartProvider>(
             create: (context) => CartProvider())
       ],
@@ -34,19 +58,27 @@ class MyApp extends StatelessWidget {
           designSize: const Size(392.72, 850.90),
           minTextAdapt: true,
           builder: (BuildContext context, Widget? child) {
-            return MaterialApp(debugShowCheckedModeBanner: false,
-              title: 'Restaurant App',
-              theme: ThemeData(colorSchemeSeed:Color(0xFF4CAC52) ,
-                 useMaterial3: true,
+            Widget screenToDisplay;
 
+            if (user == null) {
+              screenToDisplay = const ScreenAuthentication();
+            } else {
+              screenToDisplay = const ScreenUserHome();
+            }
+
+            return MaterialApp(
+              debugShowCheckedModeBanner: false,
+              title: 'Restaurant App',
+              theme: ThemeData(
+                colorSchemeSeed: const Color(0xFF4CAC52),
+                useMaterial3: true,
               ),
               routes: {
-                '/': (BuildContext ctx) =>
-                    const ScreenAuthentication(),
-                '/phoneAuth': (BuildContext ctx) => const PhoneAuthentication(),
                 '/homeScreen': (BuildContext ctx) => const ScreenUserHome(),
+                '/phoneAuth': (BuildContext ctx) => const PhoneAuthentication(),
                 '/checkoutScreen': (BuildContext ctx) => const ScreenCheckout(),
-              },initialRoute: '/',
+              },
+              home: screenToDisplay,
             );
           }),
     );

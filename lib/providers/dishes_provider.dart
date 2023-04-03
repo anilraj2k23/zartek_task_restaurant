@@ -7,7 +7,7 @@ class DishesProvider with ChangeNotifier {
 
   List<RestaurantData>? get dishes => _dishes;
 
-  bool _isLoading = false;
+  bool _isLoading = true;
 
   bool get isLoading => _isLoading;
 
