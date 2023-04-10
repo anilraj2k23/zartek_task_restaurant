@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
@@ -201,8 +202,8 @@ class ScreenCheckout extends StatelessWidget {
                               style: FilledButton.styleFrom(
                                   minimumSize: Size(0.3.sw, 0.05.sh)),
                               onPressed: () {value.clear();
-                                Navigator.popUntil(context,
-                                    ModalRoute.withName('/homeScreen'));
+                              Navigator.pop(context);
+
                               },
                               //Todo: redirect the user to the homepage with all the selected products cleared.
 
